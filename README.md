@@ -15,3 +15,7 @@ Remember to export the model of the turtlebot3 used (it can be saved in the .bas
 ```
 export TURTLEBOT3_MODEL=burger
 ```
+### Run package 
+```
+roslaunch path_controller launcher.launch
+```
