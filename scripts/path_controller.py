@@ -14,7 +14,6 @@ from matplotlib import cm
 import time
 from environment import Env
 
-
 if __name__ == "__main__": 
     rospy.init_node("path_controller_node", anonymous=False)
     
