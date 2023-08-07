@@ -14,6 +14,8 @@ from matplotlib import cm
 import time
 from environment import Env
 
+# ... (existing imports and code)
+
 if __name__ == "__main__": 
     rospy.init_node("path_controller_node", anonymous=False)
     
@@ -25,9 +27,8 @@ if __name__ == "__main__":
     r = rospy.Rate(5) # 10hz
     velocity = Twist()
     while not rospy.is_shutdown():
-        # Calcular o erro de orientação (diferença de ângulo) entre a direção atual do robô e o ângulo do objetivo
-        goal_angle = math.atan2(env.goal_y - env.position.y, env.goal_x - env.position.x)
-        orientation_error = goal_angle - env.heading
+        # Calcular o erro de orientação usando o valor de heading do ambiente
+        orientation_error = env.heading
 
         # Normalizar o erro de orientação para estar no intervalo [-pi, pi]
         if orientation_error > math.pi:
@@ -38,13 +39,14 @@ if __name__ == "__main__":
         # Calcular a velocidade angular com base no erro de orientação
         angular_velocity = 2.0 * orientation_error
         
-        # Limitar a velocidade angular a um intervalo razoável
+        # Limitar a velocidade angular a uma faixa razoável
         angular_velocity = np.clip(angular_velocity, -1.0, 1.0)
 
         # Definir a ação para controlar apenas a velocidade angular
-        action[0] = 0.0  # Sem movimento linear
+        action[0] = 0.0  
         action[1] = angular_velocity
         
         state_scan = env.step(action)
                 
         r.sleep()
+
