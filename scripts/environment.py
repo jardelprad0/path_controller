@@ -29,7 +29,8 @@ class Env():
         self.respawn_goal = Respawn()
 
     def getGoalDistace(self):
-        goal_distance = round(math.hypot(self.goal_x - self.position.x, self.goal_y - self.position.y), 2)
+       # goal_distance = round(math.hypot(self.goal_x - self.position.x, self.goal_y - self.position.y), 2)  <-- esta errado 
+        goal_distance = round(np.linalg.norm(np.array([self.goal_x, self.position.x]) - np.array([self.goal_y , self.position.y])),2)
 
         return goal_distance
 
