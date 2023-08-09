@@ -32,6 +32,8 @@ def alinha_robo(heading):
 
     return angular_velocity  # Retorna apenas a velocidade angular
 
+
+
 if __name__ == "__main__": 
     rospy.init_node("path_controller_node", anonymous=False)
     
@@ -43,15 +45,48 @@ if __name__ == "__main__":
     pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)    
     r = rospy.Rate(5) # 10hz
     velocity = Twist()
-while not rospy.is_shutdown():
-    min_distance = min(state_scan[:20])
     
-    if (min(state_scan[:20])) > 0.5: # Se não tiver obstáculo na frente
+    
+while not rospy.is_shutdown():
+    ## separando laser scan ##
+    objeto_frente_1 = min(state_scan[:22])
+    objeto_frente_2 = min(state_scan[337:])
+    
+    objeto_frente = objeto_frente_1 + objeto_frente_2
+    objeto_frente_esquerda = min(state_scan[22:67])
+    objeto_esquerda = min(state_scan[68:111])
+    objeto_tras_esquerda = min(state_scan[113:157])
+    objeto_atras = min(state_scan[158:202])
+    objeto_tras_direita = min(state_scan[203:247])
+    objeto_direita = min(state_scan[248:292])
+    objeto_frente_direita = min(state_scan[293:337])
+    
+    # min_distance = min(state_scan[:20])
+    if objeto_frente > 0.5:
         angular_velocity = alinha_robo(env.heading)
         action = np.array([0.1, angular_velocity])  # Definir a ação com a velocidade angular
-   
-
-        
+    else:
+        action[0] = 0.0
+        action[1] = 1.5
+        # if objeto_direita < 0.5: # Se não tiver obstáculo na frente
+        #     action[0] = 0.1
+        #     action[1] = 0.0
+        #     rospy.loginfo("objeto na Direita")
+            
+        # elif objeto_esquerda < 0.5:
+        #     action[0] = 0.1
+        #     action[1] = 0.0
+        #     rospy.loginfo("objeto na Esquerda")
+            
+        # elif objeto_atras < 0.5:
+        #     action[0] = 0.3
+        #     action[1] = 0.0
+        #     rospy.loginfo("objeto atrás")
+              
+  
+    state_scan = env.step(action)
+            
+    r.sleep()
     state_scan = env.step(action)
             
     r.sleep()
