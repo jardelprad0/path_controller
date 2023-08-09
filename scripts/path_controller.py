@@ -41,7 +41,7 @@ def girar_robo(angle_degrees):
     
     # Girar o robô por um certo tempo para alcançar o ângulo desejado
     start_time = rospy.Time.now()
-    while rospy.Time.now() - start_time < rospy.Duration.from_sec(math.abs(angle_rad / angular_velocity)):
+    while rospy.Time.now() - start_time < rospy.Duration.from_sec(abs(angle_rad / angular_velocity)):
         velocity.angular.z = angular_velocity
         pub.publish(velocity)
         r.sleep()
@@ -83,7 +83,7 @@ while not rospy.is_shutdown():
         action = np.array([0.1, angular_velocity])  # Definir a ação com a velocidade angular
     else:
         action[0] = 0.0
-        action[1] = 1.5
+        girar_robo(90)
         # if objeto_direita < 0.5: # Se não tiver obstáculo na frente
         #     action[0] = 0.1
         #     action[1] = 0.0
