@@ -32,7 +32,23 @@ def alinha_robo(heading):
 
     return angular_velocity  # Retorna apenas a velocidade angular
 
-
+def girar_robo(angle_degrees):
+    # Converter o ângulo de graus para radianos
+    angle_rad = math.radians(angle_degrees)
+    
+    # Configurar a velocidade angular de acordo com o ângulo desejado
+    angular_velocity = angle_rad / 2.0  # Ajuste conforme necessário
+    
+    # Girar o robô por um certo tempo para alcançar o ângulo desejado
+    start_time = rospy.Time.now()
+    while rospy.Time.now() - start_time < rospy.Duration.from_sec(math.abs(angle_rad / angular_velocity)):
+        velocity.angular.z = angular_velocity
+        pub.publish(velocity)
+        r.sleep()
+    
+    # Parar o movimento após atingir o ângulo desejado
+    velocity.angular.z = 0.0
+    pub.publish(velocity)
 
 if __name__ == "__main__": 
     rospy.init_node("path_controller_node", anonymous=False)
