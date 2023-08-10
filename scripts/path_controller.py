@@ -76,7 +76,7 @@ if __name__ == "__main__":
     while not rospy.is_shutdown():
         objeto_frente_1 = min(state_scan[:22])
         objeto_frente_2 = min(state_scan[337:])
-        
+        ## Clasifica os lados do LaserScan
         objeto_frente = objeto_frente_1 + objeto_frente_2
         objeto_frente_esquerda = min(state_scan[22:67])
         objeto_esquerda = min(state_scan[68:111])
@@ -86,21 +86,21 @@ if __name__ == "__main__":
         objeto_direita = min(state_scan[248:292])
         objeto_frente_direita = min(state_scan[293:337])
         
-
+        ## Verifica se tem objeto na frente
         if objeto_frente > 0.5 and objeto_esquerda > 0.5 and objeto_direita > 0.5:
             angular_velocity = alinha_robo(env.heading)
             action = np.array([0.15, angular_velocity])
-            
+        ## Verifica se tem objeto na frente e na esquerda   
         elif objeto_frente < 0.5  and objeto_frente_esquerda <0.5 :
             action[0] = 0
             girar_D_e_parar(pub, r)   
             rospy.loginfo("objeto frente esquerda") 
-            
+        ## Verifica se tem objeto na frente e na direita
         elif objeto_frente < 0.5  and objeto_frente_direita < 0.5 :
             action[0] = 0
             girar_E_e_parar(pub, r)
             rospy.loginfo("objeto frente direita")
-           
+        ## Verifica se tem objeto na frente e atrás
         elif objeto_direita <= 0.50 or objeto_frente_direita <= 0.50 or objeto_tras_direita <= 0.50:
             action[0] = 0.1
             action[1] = 0
@@ -109,9 +109,9 @@ if __name__ == "__main__":
                 girar_E_e_parar(pub, r)
             elif objeto_direita <= 0.4 and objeto_frente_direita <= 0.3 and objeto_tras_direita <= 0.4:
                 action[0] = 0.1
-                action[1] = 0.1
+                action[1] = 0.1 #tende a se afasta do objeto
             rospy.loginfo("objeto direita")
-            
+        ## Verifica se tem objeto na frente e atrás
         elif objeto_esquerda <= 0.50 or objeto_frente_esquerda <= 0.50 or objeto_tras_esquerda <= 0.50:
             action[0] = 0.1
             action[1] = 0
@@ -120,10 +120,11 @@ if __name__ == "__main__":
                 girar_D_e_parar(pub, r)
             elif objeto_esquerda <= 0.4 and objeto_frente_esquerda <= 0.4 and objeto_tras_esquerda <= 0.4:
                 action[0] = 0.1
-                action[1] = -0.1
+                action[1] = -0.1 #tende a se afasta do objeto
             rospy.loginfo("objeto esquerda")
+        ## Verifica se tem objeto muito proximo na frente
         elif objeto_frente < 0.3 or objeto_frente_esquerda < 0.3 or objeto_frente_direita < 0.3:
-            action[0] = -0.1
+            action[0] = -0.1 # da ré
             action[1] = 0.002
             rospy.loginfo(" muito proximo objeto frente")
     
