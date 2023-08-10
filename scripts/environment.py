@@ -54,7 +54,7 @@ class Env():
     def getState(self, scan):
         scan_range = []
         heading = self.heading
-        min_range = 0.13 # bateu
+        min_range = 0.05 # bateu
         collision = False
         goal = False
 

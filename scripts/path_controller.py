@@ -16,7 +16,7 @@ def alinha_robo(heading):
     elif orientation_error < -math.pi:
         orientation_error += 2 * math.pi
 
-    angular_velocity = 2.0 * orientation_error
+    angular_velocity = 2.5 * orientation_error
     angular_velocity = np.clip(angular_velocity, -1.0, 1.0)
 
     return angular_velocity
@@ -85,23 +85,25 @@ if __name__ == "__main__":
         objeto_tras_direita = min(state_scan[203:247])
         objeto_direita = min(state_scan[248:292])
         objeto_frente_direita = min(state_scan[293:337])
-            
         
 
         if objeto_frente > 0.5 and objeto_esquerda > 0.5 and objeto_direita > 0.5:
             angular_velocity = alinha_robo(env.heading)
-            action = np.array([0.1, angular_velocity])
+            action = np.array([0.15, angular_velocity])
             
-        elif objeto_frente < 0.5  and objeto_frente_esquerda:
+        elif objeto_frente < 0.5  and objeto_frente_esquerda <0.5 :
             action[0] = 0
-            girar_D_e_parar(pub, r)    
-        elif objeto_frente < 0.5  and objeto_frente_direita:
+            girar_D_e_parar(pub, r)   
+            rospy.loginfo("objeto frente esquerda") 
+            
+        elif objeto_frente < 0.5  and objeto_frente_direita < 0.5 :
             action[0] = 0
             girar_E_e_parar(pub, r)
-                    
-        if objeto_direita <= 0.50 and objeto_frente_direita <= 0.50 and objeto_tras_direita <= 0.50:
+            rospy.loginfo("objeto frente direita")
+           
+        elif objeto_direita <= 0.50 or objeto_frente_direita <= 0.50 or objeto_tras_direita <= 0.50:
             action[0] = 0.1
-            action[1] = 0.005
+            action[1] = 0
             if objeto_direita >= 0.5 and objeto_frente_direita >= 0.5 and objeto_tras_direita >= 0.5:
                 action[0] = 0.1
                 girar_E_e_parar(pub, r)
@@ -110,9 +112,9 @@ if __name__ == "__main__":
                 action[1] = 0.1
             rospy.loginfo("objeto direita")
             
-        elif objeto_esquerda <= 0.50 and objeto_frente_esquerda <= 0.50 and objeto_tras_esquerda <= 0.50:
+        elif objeto_esquerda <= 0.50 or objeto_frente_esquerda <= 0.50 or objeto_tras_esquerda <= 0.50:
             action[0] = 0.1
-            action[1] = -0.005
+            action[1] = 0
             if objeto_esquerda >= 0.5 and objeto_frente_esquerda >= 0.5 and objeto_tras_esquerda >= 0.5:
                 action[0] = 0.1
                 girar_D_e_parar(pub, r)
@@ -120,6 +122,10 @@ if __name__ == "__main__":
                 action[0] = 0.1
                 action[1] = -0.1
             rospy.loginfo("objeto esquerda")
+        elif objeto_frente < 0.3 or objeto_frente_esquerda < 0.3 or objeto_frente_direita < 0.3:
+            action[0] = -0.1
+            action[1] = 0.002
+            rospy.loginfo(" muito proximo objeto frente")
     
 
         state_scan = env.step(action)
